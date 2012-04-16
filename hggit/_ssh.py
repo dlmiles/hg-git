@@ -14,9 +14,13 @@ def generate_ssh_vendor(ui):
         def connect_ssh(self, host, command, username=None, port=None):
             from dulwich.client import SubprocessWrapper
             from mercurial import util
+            import os
             import subprocess
 
-            sshcmd = ui.config("ui", "ssh", "ssh")
+            if os.environ.get('GIT_SSH', False):
+                sshcmd = os.environ['GIT_SSH']
+            else:
+                sshcmd = ui.config("ui", "ssh", "ssh")
             args = util.sshargs(sshcmd, host, username, port)
             cmd = '%s %s %s' % (sshcmd, args, 
                                 util.shellquote(' '.join(command)))
